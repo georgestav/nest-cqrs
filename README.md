@@ -1,73 +1,110 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NestJS CQRS + DDD + Specification Pattern Template
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a template for a NestJS application that follows the CQRS, DDD, and Specification Patterns architectural styles. It provides a solid foundation for building scalable, maintainable, and organized applications.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
 
-## Description
+- [Introduction](#introduction)
+- [CQRS - Command Query Responsibility Segregation](#cqrs---command-query-responsibility-segregation)
+  - [What is CQRS?](#what-is-cqrs)
+  - [Example Usage](#example-usage)
+- [DDD - Domain-Driven Design](#ddd---domain-driven-design)
+  - [What is DDD?](#what-is-ddd)
+  - [Example Usage](#example-usage-1)
+- [Specification Pattern](#specification-pattern)
+  - [What is the Specification Pattern?](#what-is-the-specification-pattern)
+  - [Example Usage](#example-usage-2)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Introduction
 
-## Installation
+This project is a boilerplate for building NestJS applications using CQRS, DDD, and Specification Pattern. CQRS helps in segregating read and write operations, leading to better separation of concerns. DDD encourages modeling the business domain explicitly, leading to a more maintainable codebase. Specification Pattern allows you to encapsulate complex conditions and business rules.
 
-```bash
-$ npm install
+## CQRS - Command Query Responsibility Segregation
+
+### What is CQRS?
+
+CQRS is an architectural pattern that suggests splitting the application's read and write operations into separate models. The core idea is to use separate models for updating information (commands) and querying information (queries). This separation allows you to optimize the read and write sides independently, leading to better scalability, performance, and maintainability.
+
+### Example Usage
+
+In a traditional CRUD-based application, you might have a single model for handling both read and write operations. In CQRS, you would separate these concerns into separate models:
+
+- **Commands**: Responsible for handling create, update, and delete operations.
+- **Queries**: Responsible for fetching data and querying the database.
+
+Here's a basic example of a "CreateUserCommand" and "GetUserQuery":
+
+```typescript
+// CreateUserCommand.ts
+export class CreateUserCommand {
+  constructor(public readonly username: string, public readonly email: string) {}
+}
+
+// GetUserQuery.ts
+export class GetUserQuery {
+  constructor(public readonly userId: string) {}
+}
+```
+### DDD - Domain-Driven Design
+#### What is DDD?
+Domain-Driven Design is a software development approach that focuses on understanding and modeling the business domain explicitly. It emphasizes collaboration between domain experts and developers to create a shared understanding of the domain. DDD helps in building complex applications that are easier to maintain and evolve.
+
+### Example Usage
+In DDD, you organize your application's codebase around the domain concepts. For example, you might have the following folders:
+
+* src 
+  * users 
+  * user.entity.ts (The User entity representing the domain object)
+  * user.repository.ts (The repository responsible for persisting User entities)
+  * user.service.ts (The service handling business logic related to User entities)
+
+### Specification Pattern
+#### What is the Specification Pattern?
+The Specification Pattern is a design pattern used to encapsulate complex conditions or business rules in a reusable and composable way. It allows you to build expressive and flexible queries for data retrieval or validation.
+
+### Example Usage
+Suppose you want to retrieve all active users who are older than 18 years. Instead of hardcoding the query in your repository, you can use a Specification to encapsulate this condition:
+
+```typescript
+// ActiveAndAdultSpecification.ts
+import { Specification } from 'specification-pattern';
+
+export class ActiveAndAdultSpecification implements Specification<User> {
+isSatisfiedBy(user: User): boolean {
+return user.isActive && user.age > 18;
+}
+}
+```
+Now, you can use this specification in your repository:
+
+```typescript
+// UserRepository.ts
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
+import { ActiveAndAdultSpecification } from './ActiveAndAdultSpecification';
+
+export class UserRepository {
+constructor(private readonly userRepository: Repository<User>) {}
+
+async findActiveAdultUsers(): Promise<User[]> {
+const specification = new ActiveAndAdultSpecification();
+return this.userRepository.find(specification.toCriteria());
+}
+}
 ```
 
-## Running the app
+### Getting Started
+Clone this repository and navigate into the project directory.
+1. Install dependencies using npm install or yarn install.
+2. Copy the .env.example to .env
+3. Start the development server using npm run start:dev.
+4. Feel free to modify and extend this template according to your application's specific requirements.
 
-```bash
-# development
-$ npm run start
+Contributing
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
