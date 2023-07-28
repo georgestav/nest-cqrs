@@ -1,0 +1,107 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/samples/all": {
+      "get": {
+        "operationId": "SampleController_getSamples",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    },
+    "/api/v1/samples/sample/{id}": {
+      "get": {
+        "operationId": "SampleController_getSample",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    },
+    "/api/v1/samples/create": {
+      "post": {
+        "operationId": "SampleController_createSample",
+        "summary": "Create a new sample",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Sample data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSampleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The sample has been successfully created."
+          },
+          "400": {
+            "description": "Bad request."
+          }
+        },
+        "tags": [
+          "samples"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "nest-cqrs",
+    "description": "Auth service api",
+    "version": "0.0.1",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CreateSampleDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "Sample text",
+            "description": "The text for the sample"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    }
+  }
+}
